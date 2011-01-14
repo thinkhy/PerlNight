@@ -17,8 +17,9 @@ use Config::IniFiles;
 
 use strict;
 
+my $gmpath;
 
-# è¯»å…¥é…ç½®æ–‡ä»¶
+# ¶ÁÈëÅäÖÃÎÄ¼ş
 sub getTime
 {
     my $time = shift || time();
@@ -58,6 +59,7 @@ sub writelog
     my $tt = getTime();
     my $t = $tt->{'year'}."\/".$tt->{'month'}."\/".$tt->{'day'}." $tt->{'hour'}:$tt->{'minute'}:$tt->{'second'} ";
     print LOG $t.": ".$str;
+     
     close LOG;
 }
 
@@ -107,7 +109,7 @@ sub TestCase
 
     my $fault = 0;
 
-    my @output;  # è¾“å‡ºçš„æ–‡ä»¶é›†
+    my @output;  # Êä³öµÄÎÄ¼ş¼¯
 #foreach $file (in $files)
     my $cnt = @files;
     if ($cnt == 0)
@@ -116,7 +118,7 @@ sub TestCase
     }
 
 
-    print "å…±éœ€è½¬æ¢".$cnt."ä¸ªæ–‡ä»¶\n\n";
+    print "¹²Ğè×ª»»".$cnt."¸öÎÄ¼ş\n\n";
     my $ii = 0;
     foreach(@files)
     {
@@ -128,20 +130,20 @@ sub TestCase
         my $outputFile = $outputpath."\\".$basename.".jpg";
         print $outputFile."\n";
 
-        # TODO: æ€æ ·åˆ¤æ–­æ–‡ä»¶è½¬æ¢æˆåŠŸ
-        my $cmd = "gm convert "."\"".$src."\""." \"".$outputFile."\""; #." 2>&1";
+        # TODO: ÔõÑùÅĞ¶ÏÎÄ¼ş×ª»»³É¹¦
+        my $cmd = "\"$gmpath\\gm\" convert "."\"".$src."\""." \"".$outputFile."\""; #." 2>&1";
         print ++$ii."\n";
         print $cmd."\n";
 
         push (@output, $outputFile);
         my $result = `$cmd`;
-#or  {  writelog($src." æŠ½å–å¤±è´¥\n", $logfile)};
+#or  {  writelog($src." ³éÈ¡Ê§°Ü\n", $logfile)};
 
     }
 
-    sleep(3); # ç­‰å¾…IOåšå®Œ 
+    sleep(3); # µÈ´ıIO×öÍê 
 
-    # ç»Ÿè®¡æŠ½å›¾å¤±è´¥çš„æ–‡ä»¶
+    # Í³¼Æ³éÍ¼Ê§°ÜµÄÎÄ¼ş
     for (@output)
     {
         my $file = $_;
@@ -149,11 +151,11 @@ sub TestCase
         if (!-e $file)
         {
            $fault++;
-           writelog($file." æŠ½å–å¤±è´¥\n", $logfile);
+           writelog($file." ³éÈ¡Ê§°Ü\n", $logfile);
         }
     }
 
-    my $report = "å…±è½¬æ¢æ–‡ä»¶".$cnt."ä¸ª  "."è½¬æ¢æˆåŠŸ:".($cnt-$fault)."ä¸ª\n";
+    my $report = "¹²×ª»»ÎÄ¼ş".$cnt."¸ö  "."×ª»»³É¹¦:".($cnt-$fault)."¸ö\n";
     writelog($report, $logfile);
 
     print $report;
@@ -169,6 +171,7 @@ BEGIN
                                     -nocase  => 1,);           
 
     my $casenum = $cfg->val("summary", 'casenum'); 
+    $gmpath = $cfg->val("summary", 'gmpath'); 
     print $casenum;
 
 
@@ -179,5 +182,7 @@ BEGIN
         TestCase($count);
         $count++;
     }
-    print "å…±å®Œæˆ".$count."ä¸ªæµ‹è¯•ç”¨ä¾‹\n";
+    print "\n¹²Íê³É".(--$count)."¸ö²âÊÔÓÃÀı\n";
+
+    sleep(10);
 }
